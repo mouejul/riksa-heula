@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riksa Heula – Periksa File & Link dengan Mudah</title>
+<script>try{var t=localStorage.getItem("cek_theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="light"}</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{--ink:#1f2a4d}
+  html[data-theme=dark]{--ink:#e6e9ff;color-scheme:dark}
+  body,.card,.neo,.neo-in,.badge,.pill,.st-safe,.st-warn,.st-danger,.err,.btn-soft,.btn-clear{transition:background-color .45s ease,color .45s ease,border-color .45s ease,box-shadow .45s ease}
+  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;
+    background:radial-gradient(60rem 40rem at 8% -10%,rgba(129,140,248,.38),transparent 60%),radial-gradient(52rem 38rem at 100% 100%,rgba(110,231,183,.5),transparent 60%),linear-gradient(160deg,#e3e7f4 0%,#e8ecfb 45%,#dcf4ea 100%) fixed}
+  body::before{content:'';position:fixed;inset:0;z-index:-1;opacity:0;transition:opacity .5s ease;
+    background:radial-gradient(60rem 40rem at 8% -10%,rgba(99,102,241,.35),transparent 60%),radial-gradient(52rem 38rem at 100% 100%,rgba(16,185,129,.24),transparent 60%),linear-gradient(160deg,#0e1226 0%,#141a36 50%,#0d231f 100%)}
+  html[data-theme=dark] body::before{opacity:1}
+  .card{background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(255,255,255,.8);border-radius:30px;box-shadow:0 24px 60px -26px rgba(79,70,229,.3),inset 0 1px 0 rgba(255,255,255,.95)}
+  .neo{background:rgba(255,255,255,.6);border-radius:20px;box-shadow:6px 6px 14px rgba(120,130,190,.18),-6px -6px 14px rgba(255,255,255,.95)}
+  .neo-in{background:rgba(236,240,255,.75);border:0;color:inherit;box-shadow:inset 4px 4px 10px rgba(120,130,190,.22),inset -4px -4px 10px rgba(255,255,255,.95)}
+  .neo-in::placeholder{color:#94a3b8}
+  .title-grad{background-image:linear-gradient(90deg,#4f46e5,#10b981);-webkit-background-clip:text;background-clip:text;color:transparent}
+  /* tombol tema */
+  .theme-btn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:1.2rem;cursor:pointer;background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.95);
+    box-shadow:5px 5px 12px rgba(120,130,190,.22),-4px -4px 10px rgba(255,255,255,.95);transition:transform .15s ease,background-color .45s ease,box-shadow .45s ease}
+  .theme-btn:active{transform:scale(.9) rotate(-20deg)}
+  /* badge */
+  .badge{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:.5rem;padding:.4rem .95rem;border-radius:999px;font-size:.78rem;font-weight:700;color:#3b4a8f;background:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.95);box-shadow:0 8px 20px -10px rgba(99,102,241,.55)}
+  .badge::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.9) 50%,transparent 70%);transform:translateX(-120%);animation:shine 4.5s ease-in-out infinite}
+  @keyframes shine{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+  .dot{width:.5rem;height:.5rem;border-radius:50%;background:#10b981;animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}70%,100%{box-shadow:0 0 0 8px rgba(16,185,129,0)}}
+  /* pil info kecil */
+  .pill{display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .8rem;border-radius:999px;font-size:.78rem;font-weight:700;border:1px solid}
+  .pill-green{background:#d1fae5;color:#065f46;border-color:#a7f3d0}.pill-amber{background:#fef3c7;color:#78350f;border-color:#fde68a}
+  .pill-blue{background:#e0e7ff;color:#3730a3;border-color:#c7d2fe}.pill-gray{background:#eef0f7;color:#475069;border-color:#dde1ee}
+  /* tab */
+  .tab-ind{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px) / 4);border-radius:14px;background:#fff;box-shadow:0 8px 18px -6px rgba(99,102,241,.4);transition:transform .38s cubic-bezier(.4,.1,.2,1),background-color .45s ease}
+  /* tombol */
+  .btn-main{background:linear-gradient(110deg,#6366f1 0%,#34d399 100%);box-shadow:0 12px 30px -10px rgba(99,102,241,.75),0 8px 22px -8px rgba(52,211,153,.7);transition:transform .15s ease,box-shadow .25s ease,filter .25s ease}
+  .btn-main:hover:not(:disabled){filter:brightness(1.06)}.btn-main:active:not(:disabled){transform:scale(.96)}
+  .btn-main:disabled{opacity:.45;box-shadow:none;cursor:not-allowed}
+  .btn-soft{background:rgba(255,255,255,.8);color:#4338ca;box-shadow:0 4px 12px -4px rgba(99,102,241,.3)}
+  .btn-clear{background:#fff1f2;color:#e11d48}
+  /* drop */
+  .drop{position:relative;border-radius:24px;background:rgba(238,242,255,.55);transition:background-color .3s;box-shadow:inset 4px 4px 10px rgba(120,130,190,.15),inset -4px -4px 10px rgba(255,255,255,.95)}
+  .drop .dash{fill:none;stroke:#b4bff9;stroke-width:2.5;stroke-dasharray:10 9;animation:march 1.2s linear infinite;animation-play-state:paused;transition:stroke .3s}
+  .drop:hover .dash,.drop:focus-visible .dash,.drop.active .dash{animation-play-state:running;stroke:#6366f1}
+  .drop.active{background:rgba(224,231,255,.9)}
+  @keyframes march{to{stroke-dashoffset:-38}}
+  .bounce{display:inline-block;animation:bounce 2.6s ease-in-out infinite;filter:drop-shadow(0 10px 8px rgba(99,102,241,.25))}
+  @keyframes bounce{0%,100%{transform:translateY(0) scale(1,1)}45%{transform:translateY(-12px) scale(.98,1.03)}60%{transform:translateY(0) scale(1.04,.96)}}
+  /* gauge & status */
+  .needle{transition:transform 1.4s cubic-bezier(.2,.9,.3,1.15);transform-origin:100px 100px}
+  .wobble{transform-origin:100px 100px;animation:wobble 3.2s ease-in-out infinite}
+  @keyframes wobble{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+  .track{stroke:#e8ebf7}.needle-line{stroke:#1f2a4d}.hub{fill:#1f2a4d}
+  .st-safe{background:rgba(209,250,229,.75);border-color:#a7f3d0;color:#065f46}
+  .st-warn{background:rgba(254,243,199,.8);border-color:#fde68a;color:#78350f}
+  .st-danger{background:rgba(255,228,230,.8);border-color:#fecdd3;color:#9f1239}
+  .sc-safe{color:#059669}.sc-warn{color:#d97706}.sc-danger{color:#e11d48}
+  .err{background:#fff1f2;border-color:#fecdd3;color:#9f1239}
+  .spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+  :focus-visible{outline:3px solid #7c6af0;outline-offset:2px}
+
+  /* ===== MODE GELAP ===== */
+  html[data-theme=dark] .card{background:rgba(24,30,60,.6);border-color:rgba(255,255,255,.1);box-shadow:0 24px 60px -26px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.08)}
+  html[data-theme=dark] .neo{background:rgba(32,40,78,.6);box-shadow:6px 6px 14px rgba(4,7,20,.5),-6px -6px 14px rgba(80,95,170,.12)}
+  html[data-theme=dark] .neo-in{background:rgba(14,19,42,.7);box-shadow:inset 4px 4px 10px rgba(0,0,0,.45),inset -4px -4px 10px rgba(80,95,170,.14)}
+  html[data-theme=dark] .title-grad{background-image:linear-gradient(90deg,#a5b4fc,#6ee7b7)}
+  html[data-theme=dark] .theme-btn{background:rgba(32,40,78,.8);border-color:rgba(255,255,255,.12);box-shadow:5px 5px 12px rgba(4,7,20,.5),-4px -4px 10px rgba(80,95,170,.14)}
+  html[data-theme=dark] .badge{background:rgba(32,40,78,.75);color:#c7d2fe;border-color:rgba(255,255,255,.12)}
+  html[data-theme=dark] .pill-green{background:rgba(16,185,129,.18);color:#a7f3d0;border-color:rgba(52,211,153,.4)}
+  html[data-theme=dark] .pill-amber{background:rgba(245,158,11,.18);color:#fde68a;border-color:rgba(251,191,36,.4)}
+  html[data-theme=dark] .pill-blue{background:rgba(99,102,241,.22);color:#c7d2fe;border-color:rgba(165,180,252,.35)}
+  html[data-theme=dark] .pill-gray{background:rgba(148,163,184,.15);color:#cbd5e1;border-color:rgba(148,163,184,.3)}
+  html[data-theme=dark] .tab-ind{background:#2c3672;box-shadow:0 8px 18px -6px rgba(0,0,0,.6)}
+  html[data-theme=dark] .btn-soft{background:rgba(255,255,255,.09);color:#c7d2fe;box-shadow:none}
+  html[data-theme=dark] .btn-clear{background:rgba(244,63,94,.2);color:#fda4af}
+  html[data-theme=dark] .drop{background:rgba(16,22,48,.6);box-shadow:inset 4px 4px 10px rgba(0,0,0,.4),inset -4px -4px 10px rgba(80,95,170,.12)}
+  html[data-theme=dark] .drop.active{background:rgba(40,50,100,.7)}
+  html[data-theme=dark] .drop .dash{stroke:#4b5690}
+  html[data-theme=dark] .drop:hover .dash,html[data-theme=dark] .drop.active .dash{stroke:#a5b4fc}
+  html[data-theme=dark] .track{stroke:#2b335f}html[data-theme=dark] .needle-line{stroke:#e6e9ff}html[data-theme=dark] .hub{fill:#e6e9ff}
+  html[data-theme=dark] .st-safe{background:rgba(16,185,129,.16);border-color:rgba(52,211,153,.4);color:#a7f3d0}
+  html[data-theme=dark] .st-warn{background:rgba(245,158,11,.15);border-color:rgba(251,191,36,.4);color:#fde68a}
+  html[data-theme=dark] .st-danger{background:rgba(244,63,94,.16);border-color:rgba(251,113,133,.4);color:#fecdd3}
+  html[data-theme=dark] .sc-safe{color:#34d399}html[data-theme=dark] .sc-warn{color:#fbbf24}html[data-theme=dark] .sc-danger{color:#fb7185}
+  html[data-theme=dark] .err{background:rgba(244,63,94,.14);border-color:rgba(251,113,133,.4);color:#fecdd3}
+  html[data-theme=dark] .text-slate-500,html[data-theme=dark] .text-slate-600{color:#9aa6cf}
+  html[data-theme=dark] .text-slate-700{color:#c4cdee}
+  html[data-theme=dark] .text-indigo-700{color:#c7d2fe}
+
+  .print-only{display:none}
+  #camWrap video{width:100%;border-radius:20px;background:#000;max-height:340px;object-fit:cover}
+  @media print{
+    @page{margin:14mm}
+    *{transition:none!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{background:#fff!important;color:#111!important}body::before{display:none!important}
+    main>:not(#result){display:none!important}
+    .print-only{display:block!important}.no-print{display:none!important}
+    #result{box-shadow:none!important;background:#fff!important;border:1px solid #ddd;-webkit-backdrop-filter:none;backdrop-filter:none}
+  }
+  @media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body class="px-4 py-8">
+<main class="max-w-2xl mx-auto">
+
+  <header class="text-center mb-7">
+    <div class="flex justify-end mb-2"><button id="themeBtn" type="button" class="theme-btn" aria-label="Ganti tema"></button></div>
+    <span class="badge"><span class="dot"></span>🛡️ Powered by VirusTotal v3 API</span>
+    <h1 class="title-grad mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight">Riksa Heula</h1>
+    <p class="text-slate-600 mt-2 text-base sm:text-lg">Periksa file atau link sebelum Anda buka.<br class="sm:hidden"> Gratis, cepat, mudah.</p>
+  </header>
+
+  <!-- TABS + INPUT -->
+  <section class="card p-5 sm:p-6">
+    <div class="relative grid grid-cols-4 p-1.5 rounded-2xl neo-in mb-5" role="tablist">
+      <span id="tabInd" class="tab-ind" aria-hidden="true"></span>
+      <button id="tabUrl" role="tab" class="tab">🔗 Cek Link</button>
+      <button id="tabFile" role="tab" class="tab">📄 Cek File</button>
+      <button id="tabQr" role="tab" class="tab">📷 Scan QR</button>
+      <button id="tabQuiz" role="tab" class="tab">🎮 Kuis</button>
+    </div>
+
+    <div id="paneUrl">
+      <label for="urlInput" class="block font-bold mb-2">Tempel alamat website atau link</label>
+      <input id="urlInput" type="url" inputmode="url" placeholder="https://contoh.com/promo-hadiah"
+        class="neo-in w-full rounded-2xl px-5 py-4 text-lg outline-none focus:ring-2 focus:ring-indigo-300">
+      <button id="goUrl" class="btn-main mt-4 w-full rounded-2xl text-white text-lg font-extrabold py-4">Periksa Sekarang</button>
+    </div>
+
+    <div id="paneFile" class="hidden">
+      <div id="drop" class="drop text-center px-4 py-10 cursor-pointer" tabindex="0" role="button" aria-label="Pilih file">
+        <svg class="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true"><rect class="dash" x="1.5" y="1.5" rx="23" style="width:calc(100% - 3px);height:calc(100% - 3px)"/></svg>
+        <div class="text-6xl mb-3" aria-hidden="true"><span class="bounce">📂</span></div>
+        <p class="font-extrabold text-lg">Tarik file ke sini</p>
+        <p class="text-slate-600 text-sm">atau klik untuk memilih dari perangkat Anda</p>
+        <p class="text-slate-500 text-xs mt-3">Maksimal 32 MB. Hindari dokumen rahasia karena file diperiksa oleh VirusTotal.</p>
+        <input id="fileInput" type="file" class="hidden">
+      </div>
+      <div id="fileRow" class="hidden mt-3">
+        <div class="neo flex items-center justify-center gap-2 px-3 py-2">
+          <span aria-hidden="true">📎</span>
+          <span id="fileName" class="font-semibold text-indigo-700 truncate min-w-0"></span>
+          <button id="clearFile" type="button" aria-label="Batal atau ganti file"
+            class="btn-clear shrink-0 rounded-full font-bold text-sm px-3 py-1">✖ Ganti file</button>
+        </div>
+      </div>
+      <button id="goFile" class="btn-main mt-4 w-full rounded-2xl text-white text-lg font-extrabold py-4" disabled>Periksa Sekarang</button>
+    </div>
+
+    <div id="paneQr" class="hidden">
+      <p class="font-bold mb-2">Pindai QR Code atau QRIS</p>
+      <div id="qrDrop" class="drop text-center px-4 py-8 cursor-pointer" tabindex="0" role="button" aria-label="Pilih gambar QR">
+        <svg class="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true"><rect class="dash" x="1.5" y="1.5" rx="23" style="width:calc(100% - 3px);height:calc(100% - 3px)"/></svg>
+        <div class="text-5xl mb-2" aria-hidden="true"><span class="bounce">🖼️</span></div>
+        <p class="font-extrabold">Unggah foto atau tangkapan layar QR</p>
+        <p class="text-slate-600 text-sm">Gambar hanya dibaca di perangkat Anda, tidak diunggah.</p>
+        <input id="qrInput" type="file" accept="image/*" class="hidden">
+      </div>
+      <button id="camBtn" type="button" class="btn-main mt-4 w-full rounded-2xl text-white text-lg font-extrabold py-4">📷 Buka Kamera</button>
+      <div id="camWrap" class="hidden mt-4"><video id="cam" playsinline muted></video><p class="text-center text-sm text-slate-600 mt-2">Arahkan kamera ke QR. Hasil muncul otomatis.</p></div>
+    </div>
+
+    <div id="paneQuiz" class="hidden"><div id="quizBox" aria-live="polite"></div></div>
+  </section>
+
+  <!-- LOADING -->
+  <section id="loading" class="card p-8 mt-4 text-center hidden" aria-live="polite">
+    <div class="text-5xl spin inline-block">🔍</div>
+    <p id="loadText" class="font-bold mt-3">Sedang memeriksa…</p>
+    <p id="loadDest" class="hidden mt-2 text-sm font-semibold break-all"></p>
+    <p class="text-sm text-slate-500">Biasanya selesai dalam setengah menit.</p>
+  </section>
+
+  <!-- ERROR -->
+  <section id="error" class="err mt-4 rounded-3xl border-2 p-5 hidden" role="alert">
+    <p class="font-extrabold">😕 Ada kendala</p>
+    <p id="errorText" class="mt-1"></p>
+  </section>
+
+  <!-- QR BOX -->
+  <section id="qrisBox" class="card p-6 mt-4 text-left hidden" aria-live="polite">
+    <p id="qbTitle" class="text-xl font-extrabold"></p>
+    <div id="qbPills" class="flex flex-wrap gap-2 mt-3"></div>
+    <div id="qbRows" class="mt-4 space-y-2"></div>
+    <div id="qbWarns" class="mt-4 space-y-2"></div>
+    <p id="qbNote" class="text-sm text-slate-600 mt-4 leading-relaxed"></p>
+    <button id="qbBack" class="btn-soft rounded-2xl font-bold px-6 py-3 mt-4">Pindai yang lain</button>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="card p-6 mt-4 text-center hidden" aria-live="polite">
+    <div class="print-only text-left mb-3"><p class="font-extrabold text-lg">Laporan Pemeriksaan Riksa Heula</p><p id="printDate" class="text-xs"></p></div>
+    <svg viewBox="0 0 200 120" class="w-64 mx-auto" aria-hidden="true">
+      <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#f43f5e"/><stop offset=".5" stop-color="#fbbf24"/><stop offset="1" stop-color="#34d399"/></linearGradient></defs>
+      <path class="track" d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="#e8ebf7" stroke-width="18" stroke-linecap="round"/>
+      <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="url(#g)" stroke-width="18" stroke-linecap="round"/>
+      <g id="needle" class="needle" style="transform:rotate(-90deg)"><g class="wobble"><line x1="100" y1="100" x2="100" y2="38" class="needle-line" stroke-width="5" stroke-linecap="round"/></g></g>
+      <circle class="hub" cx="100" cy="100" r="9"/>
+    </svg>
+    <p class="text-slate-500 font-semibold -mt-1">Skor Keamanan</p>
+    <p id="score" class="text-6xl font-extrabold tracking-tight">–</p>
+    <div id="verdict" class="mt-4 rounded-2xl p-4">
+      <p id="vTitle" class="text-xl font-extrabold"></p>
+      <p id="vText" class="mt-1 text-sm"></p>
+    </div>
+    <div class="mt-4 text-left space-y-3">
+      <div id="brandWarn" class="st-danger border-2 rounded-2xl p-4 text-sm hidden" role="alert"></div>
+      <div id="infoPanel" class="neo p-4 hidden">
+        <p class="font-extrabold">🌐 Info Link</p>
+        <p id="destLine" class="hidden text-sm mt-2">Tujuan asli: <b id="destUrl" class="break-all"></b></p>
+        <div id="pills" class="flex flex-wrap gap-2 mt-3"></div>
+        <p id="infoNote" class="text-xs text-slate-500 mt-3 leading-relaxed"></p>
+      </div>
+      <div class="neo p-4">
+        <p class="font-extrabold">🔎 Apa artinya?</p>
+        <p id="vMeaning" class="text-sm text-slate-700 mt-1 leading-relaxed"></p>
+        <p id="vCount" class="text-xs text-slate-500 mt-2"></p>
+      </div>
+      <div class="neo p-4">
+        <p class="font-extrabold">👉 Yang sebaiknya Anda lakukan</p>
+        <ul id="vTips" class="mt-2 space-y-2 text-sm text-slate-700 leading-relaxed"></ul>
+      </div>
+    </div>
+    <p id="vTarget" class="mt-3 text-xs text-slate-500 break-all"></p>
+    <div class="no-print mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <button id="speak" class="btn-soft rounded-2xl font-bold px-4 py-3">🔊 Dengarkan Hasil</button>
+      <a id="shareWa" href="#" target="_blank" rel="noopener" class="rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold px-4 py-3 shadow-md">💬 Bagikan ke WhatsApp</a>
+      <button id="shareImg" class="btn-soft rounded-2xl font-bold px-4 py-3">🖼️ Bagikan Gambar Kartu</button>
+      <button id="pdfBtn" class="btn-soft rounded-2xl font-bold px-4 py-3">📄 Simpan Laporan PDF</button>
+      <button id="again" class="btn-soft rounded-2xl font-bold px-4 py-3 sm:col-span-2">Periksa yang lain</button>
+    </div>
+    <p id="actMsg" class="no-print text-xs text-slate-500 mt-2" aria-live="polite"></p>
+  </section>
+
+  <footer class="mt-8">
+    <div class="grid grid-cols-3 gap-3 text-center">
+      <div class="neo p-3"><div class="text-2xl" aria-hidden="true">🔒</div><p class="font-bold text-sm mt-1">Privasi terjaga</p><p class="text-xs text-slate-500 mt-0.5">Tanpa daftar. Aplikasi ini tidak menyimpan data Anda.</p></div>
+      <div class="neo p-3"><div class="text-2xl" aria-hidden="true">⚡</div><p class="font-bold text-sm mt-1">Hasil cepat</p><p class="text-xs text-slate-500 mt-0.5">Umumnya selesai dalam hitungan detik.</p></div>
+      <div class="neo p-3"><div class="text-2xl" aria-hidden="true">🛡️</div><p class="font-bold text-sm mt-1">Banyak pemeriksa</p><p class="text-xs text-slate-500 mt-0.5">Dicek oleh puluhan mesin keamanan.</p></div>
+    </div>
+    <div class="neo p-4 mt-4 text-sm no-print">
+      <p class="font-bold">🏛️ Mau cek atau melapor? Pakai layanan resmi ini</p>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <a class="pill pill-blue" href="https://cekrekening.id" target="_blank" rel="noopener">🏦 CekRekening.id</a>
+        <a class="pill pill-blue" href="https://aduannomor.id" target="_blank" rel="noopener">📞 AduanNomor.id</a>
+        <a class="pill pill-blue" href="https://turnbackhoax.id" target="_blank" rel="noopener">🔎 TurnBackHoax.id</a>
+      </div>
+      <p class="text-xs text-slate-500 mt-3 leading-relaxed">CekRekening.id (rekening penipuan) dan AduanNomor.id (nomor telepon penipu) adalah layanan pemerintah di bidang komunikasi dan digital. TurnBackHoax.id dikelola komunitas anti-hoaks Mafindo. Semuanya situs eksternal di luar Riksa Heula.</p>
+    </div>
+    <p class="text-center text-xs text-slate-500 mt-5">Hasil berasal dari VirusTotal. Tidak ada pemeriksaan yang 100% pasti, tetap waspada.</p>
+  </footer>
+</main>
+
+<div id="shareCard" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:540px;padding:36px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:linear-gradient(160deg,#e3e7f4,#dcf4ea);color:#1f2a4d">
+  <div style="font-weight:800;font-size:22px">🛡️ Riksa Heula</div>
+  <div id="scBox" style="margin-top:20px;border-radius:28px;padding:32px;text-align:center;background:#fff">
+    <div id="scE" style="font-size:64px"></div>
+    <div id="scT" style="font-size:26px;font-weight:800;margin-top:8px;line-height:1.25"></div>
+    <div style="margin-top:18px;font-size:15px;color:#667">Skor Keamanan</div>
+    <div id="scS" style="font-size:72px;font-weight:800;line-height:1.1"></div>
+    <div id="scU" style="margin-top:16px;font-size:14px;color:#556;word-break:break-all"></div>
+  </div>
+  <div id="scD" style="margin-top:16px;text-align:center;font-size:13px;color:#667"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const MAX_SIZE = 32 * 1024 * 1024;
+let mode = 'url', chosenFile = null, busy = false;
+let camStream = null, camRaf = 0;   // dideklarasikan di awal agar setMode() aman dipanggil saat halaman dimuat
+
+/* ---------- PENGATURAN (diisi oleh pemilik situs) ---------- */
+const API_KEY  = '';
+const API_BASE = 'https://www.virustotal.com/api/v3';   // ganti ke alamat server perantara jika ingin kunci benar-benar tersembunyi
+
+/* ---------- Tema terang / gelap ---------- */
+function themeIcon(){
+  const dark = document.documentElement.dataset.theme === 'dark';
+  $('themeBtn').textContent = dark ? '☀️' : '🌙';
+  $('themeBtn').setAttribute('aria-label', dark ? 'Ganti ke mode terang' : 'Ganti ke mode gelap');
+}
+$('themeBtn').onclick = () => {
+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem('cek_theme', next); } catch {}
+  themeIcon();
+};
+themeIcon();
+
+/* ---------- Tab ---------- */
+const MODES = ['url', 'file', 'qr', 'quiz'];
+function setMode(m){
+  mode = m; stopCam();
+  const ids = { url: 'Url', file: 'File', qr: 'Qr', quiz: 'Quiz' };
+  for (const k of MODES) {
+    $('pane' + ids[k]).classList.toggle('hidden', k !== m);
+    $('tab' + ids[k]).className = 'tab relative z-10 py-3 font-bold text-xs sm:text-sm transition-colors ' + (k === m ? 'text-indigo-700' : 'text-slate-500');
+    $('tab' + ids[k]).setAttribute('aria-selected', String(k === m));
+  }
+  $('tabInd').style.transform = 'translateX(' + MODES.indexOf(m) * 100 + '%)';
+  hideAll();
+  if (m === 'quiz') renderQuiz();
+}
+$('tabUrl').onclick = () => setMode('url');
+$('tabFile').onclick = () => setMode('file');
+$('tabQr').onclick = () => setMode('qr');
+$('tabQuiz').onclick = () => setMode('quiz');
+setMode('url');
+
+/* ---------- Drag & drop ---------- */
+const drop = $('drop');
+drop.onclick = () => $('fileInput').click();
+drop.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('fileInput').click(); } };
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('active'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('active'); }));
+drop.addEventListener('drop', e => pickFile(e.dataTransfer.files[0]));
+$('fileInput').onchange = e => pickFile(e.target.files[0]);
+function clearFile(){
+  chosenFile = null;
+  $('fileInput').value = '';
+  $('fileName').textContent = '';
+  $('fileRow').classList.add('hidden');
+  $('goFile').disabled = true;
+  hideAll();
+}
+$('clearFile').onclick = e => { e.stopPropagation(); clearFile(); };
+function pickFile(f){
+  hideAll();
+  if (!f) return;
+  if (f.size > MAX_SIZE) { clearFile(); return showError('File ini lebih dari 32 MB, terlalu besar untuk diperiksa di sini. Coba file yang lebih kecil.'); }
+  chosenFile = f;
+  $('fileName').textContent = f.name;
+  $('fileRow').classList.remove('hidden');
+  $('goFile').disabled = false;
+}
+
+/* ---------- UI helper ---------- */
+function hideAll(){ ['loading','error','result','qrisBox'].forEach(i => $(i).classList.add('hidden')); try { speechSynthesis.cancel(); } catch {} }
+function showError(msg){ hideAll(); $('errorText').textContent = msg; $('error').classList.remove('hidden'); }
+function showLoading(t, dest){ hideAll(); $('loadText').textContent = t; $('loadDest').textContent = dest ? '➡️ Tujuan asli: ' + dest : ''; $('loadDest').classList.toggle('hidden', !dest); $('loading').classList.remove('hidden'); }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ---------- Panggilan API ---------- */
+class FriendlyError extends Error {}
+async function vt(path, opts = {}){
+  if (!API_KEY || API_KEY.startsWith('MASUKKAN_')) throw new FriendlyError('Layanan belum dikonfigurasi. Hubungi pengelola situs ini.');
+  let res;
+  try {
+    res = await fetch(API_BASE + path, { ...opts, headers: { 'x-apikey': API_KEY, accept: 'application/json', ...(opts.headers || {}) } });
+  } catch {
+    throw new FriendlyError('Tidak bisa terhubung ke layanan pemeriksa. Cek koneksi internet Anda. Jika tetap gagal, coba buka halaman ini lewat alamat localhost atau nonaktifkan pemblokir iklan.');
+  }
+  if (res.status === 404) return null;
+  if (res.ok) return res.json();
+  if (res.status === 401 || res.status === 403) throw new FriendlyError('Layanan pemeriksa sedang tidak bisa diakses. Silakan hubungi pengelola situs ini.');
+  if (res.status === 429) throw Object.assign(new FriendlyError('Sedang banyak yang memeriksa. Tunggu sekitar 1 menit lalu coba lagi. Jika masih gagal, kuota harian layanan mungkin sudah habis, coba lagi besok.'), { status: 429 });
+  if (res.status === 400) throw new FriendlyError('Link atau file ini tidak bisa dibaca. Pastikan formatnya benar, contoh: https://contoh.com');
+  throw new FriendlyError('Layanan sedang bermasalah (kode ' + res.status + '). Coba lagi beberapa saat lagi.');
+}
+
+async function waitAnalysis(id){
+  for (let i = 0; i < 20; i++){
+    let r;
+    try { r = await vt('/analyses/' + id); }
+    catch (e) { if (e.status === 429 && i < 19) { await sleep(15000); continue; } throw e; }   // antrean penuh: tunggu lalu coba lagi
+    const a = r && r.data.attributes;
+    if (a && a.status === 'completed') return { stats: a.stats, meta: r.meta };
+    await sleep(i < 2 ? 5000 : 10000);
+  }
+  throw new FriendlyError('Pemeriksaan memakan waktu lebih lama dari biasanya. Coba lagi sebentar lagi.');
+}
+
+async function sha256(file){
+  const buf = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/* ---------- Micro-tools: pemendek link & lokasi server ---------- */
+const SHORTENERS = ['bit.ly','tinyurl.com','t.co','goo.gl','ow.ly','is.gd','v.gd','buff.ly','rebrand.ly','cutt.ly','shorturl.at','s.id','rb.gy','tiny.cc','t.ly','bl.ink','adf.ly','shorte.st','bit.do','shp.ee','tkp.me'];
+const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./, '').toLowerCase(); } catch { return ''; } };
+const urlId = u => btoa(String.fromCharCode(...new TextEncoder().encode(u))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const worse = (a, b) => ((b.malicious || 0) * 10 + (b.suspicious || 0)) > ((a.malicious || 0) * 10 + (a.suspicious || 0)) ? b : a;
+
+async function getJson(u){
+  const c = new AbortController(), t = setTimeout(() => c.abort(), 5000);
+  try { const r = await fetch(u, { signal: c.signal }); return r.ok ? await r.json() : null; } finally { clearTimeout(t); }
+}
+async function lookupCountry(host){
+  try {
+    let ip = /^\d{1,3}(\.\d{1,3}){3}$/.test(host) ? host : null;
+    if (!ip) { const d = await getJson('https://dns.google/resolve?name=' + encodeURIComponent(host) + '&type=A'); ip = d && d.Answer && (d.Answer.find(x => x.type === 1) || {}).data; }
+    if (!ip) return null;
+    const g = await getJson('https://ipwho.is/' + ip);
+    if (!g || g.success === false || !g.country_code) return null;
+    const code = g.country_code.toUpperCase();
+    let name = g.country; try { name = new Intl.DisplayNames(['id'], { type: 'region' }).of(code) || name; } catch {}
+    return { name, flag: String.fromCodePoint(...[...code].map(c => 0x1F1E6 + c.charCodeAt(0) - 65)) };
+  } catch { return null; }
+}
+
+async function checkUrl(url){
+  const host = hostOf(url);
+  const info = { host, isShort: SHORTENERS.includes(host), finalUrl: null, redirected: false, destUnchecked: false, country: null };
+  showLoading(info.isShort ? 'Link pendek terdeteksi. Melacak tujuan aslinya…' : 'Mengirim link untuk diperiksa…');
+  const r = await vt('/urls', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ url }) });
+  showLoading('Menganalisis link…');
+  const first = await waitAnalysis(r.data.id);
+  let stats = first.stats;
+
+  if (info.isShort) {   // lacak tujuan asli dari hasil pemindaian, lalu periksa tujuan itu juga
+    const obj = await vt('/urls/' + ((first.meta && first.meta.url_info && first.meta.url_info.id) || urlId(url)));
+    const fin = obj && obj.data.attributes.last_final_url;
+    if (fin && hostOf(fin) && hostOf(fin) !== host) {
+      info.finalUrl = fin; info.redirected = true;
+      showLoading('Memeriksa tujuan asli…', fin);
+      try {
+        const r2 = await vt('/urls', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ url: fin }) });
+        stats = worse(stats, (await waitAnalysis(r2.data.id)).stats);
+      } catch (e) { if (e instanceof FriendlyError) info.destUnchecked = true; else throw e; }
+    }
+  }
+  showLoading('Mengecek lokasi server…', info.finalUrl);
+  info.country = await lookupCountry(hostOf(info.finalUrl || url));
+  return { stats, info };
+}
+
+async function checkFile(file){
+  showLoading('Menyiapkan file…');
+  const hash = await sha256(file);
+  const known = await vt('/files/' + hash);           // file yang sudah pernah dicek langsung dapat hasil
+  if (known && known.data.attributes.last_analysis_stats) {
+    const s = known.data.attributes.last_analysis_stats;
+    if (s.malicious + s.suspicious + s.harmless + s.undetected > 0) return { stats: s, info: null };
+  }
+  showLoading('Mengunggah file…');
+  const fd = new FormData(); fd.append('file', file);
+  const up = await vt('/files', { method: 'POST', body: fd });
+  showLoading('Menganalisis file…');
+  return { stats: (await waitAnalysis(up.data.id)).stats, info: null };
+}
+
+/* ---------- Hasil ---------- */
+function interpret(s){
+  const bad = s.malicious || 0, sus = s.suspicious || 0;
+  if (bad >= 3) return { level: 'danger', score: Math.max(3, 35 - bad * 2) };
+  if (bad > 0 || sus > 0) return { level: 'warn', score: Math.max(45, 75 - bad * 10 - sus * 5) };
+  return { level: 'safe', score: 100 };
+}
+const LOOK = {
+  safe:   { box: 'st-safe', icon: '✅', t: 'Aman! Tidak ditemukan ancaman.', d: 'Tidak ada tanda bahaya yang ditemukan.' },
+  warn:   { box: 'st-warn',     icon: '⚠️', t: 'Peringatan! Terdeteksi mencurigakan.', d: 'Belum tentu berbahaya, tapi sebaiknya jangan dibuka dulu.' },
+  danger: { box: 'st-danger',       icon: '⛔', t: 'Bahaya! Terdeteksi memuat virus/malware.', d: 'Jangan dibuka. Ini sangat berisiko bagi Anda.' }
+};
+
+/* ---------- Penjelasan & saran untuk orang awam ---------- */
+function adviceFor(level, kind, st){
+  const bad = st.malicious || 0, sus = st.suspicious || 0;
+  const isUrl = kind === 'url', thing = isUrl ? 'link' : 'file';
+  const total = bad + sus + (st.harmless || 0) + (st.undetected || 0);
+  const count = level === 'safe'
+    ? `Dari ${total} pemeriksa keamanan, tidak satu pun menemukan masalah.`
+    : `Dari ${total} pemeriksa keamanan: ${bad} menyatakan berbahaya, ${sus} menandai mencurigakan.`;
+  const A = {
+    safe: {
+      icon: '✅',
+      meaning: isUrl
+        ? 'Link ini tidak dikenali sebagai situs penipuan (phishing), penyebar virus, atau situs berbahaya lainnya.'
+        : 'File ini tidak mengandung virus atau program jahat yang dikenali oleh para pemeriksa keamanan.',
+      tips: isUrl ? [
+        'Cek ejaan alamat di bilah browser. Penipu sering memakai alamat yang mirip situs resmi.',
+        'Tetap jangan memasukkan password, PIN, atau kode OTP kecuali Anda yakin itu situs resmi.',
+        'Hasil aman bukan jaminan 100%. Situs bisa berubah isinya sewaktu-waktu.'
+      ] : [
+        'Pastikan file berasal dari sumber yang Anda percaya.',
+        'Waspadai nama file yang aneh, misalnya foto.jpg.exe. Itu bukan foto, melainkan program.',
+        'Biarkan antivirus di perangkat Anda tetap aktif sebagai perlindungan tambahan.'
+      ]
+    },
+    warn: {
+      icon: '⚠️',
+      meaning: bad > 0
+        ? `Sebagian kecil pemeriksa menandai ${thing} ini. Bisa jadi itu salah deteksi (alarm palsu), tetapi bisa juga ancaman baru yang belum banyak dikenali. Karena belum pasti, lebih baik berhati-hati.`
+        : `Ada ciri pada ${thing} ini yang mirip penipuan atau program berbahaya, meski belum terbukti. Karena belum pasti, lebih baik berhati-hati.`,
+      tips: isUrl ? [
+        'Jangan dibuka dulu. Jika link dikirim orang, tanyakan ke pengirimnya lewat telepon atau chat resmi.',
+        'Jika sudah terlanjur dibuka, jangan isi password, data bank, atau kode OTP, dan jangan unduh apa pun.',
+        'Untuk situs yang Anda butuhkan, ketik alamat resminya sendiri atau cari lewat mesin pencari.',
+        'Coba periksa lagi beberapa jam kemudian. Hasil bisa berubah.'
+      ] : [
+        'Jangan dibuka atau dijalankan dulu.',
+        'Unduh ulang dari situs resmi pembuatnya, lalu periksa lagi di sini.',
+        'Jika file ini tetap harus dipakai, pindai juga dengan antivirus di perangkat Anda dan jangan buka di perangkat yang menyimpan data penting.'
+      ]
+    },
+    danger: {
+      icon: '🚫',
+      meaning: isUrl
+        ? 'Banyak pemeriksa sepakat link ini berbahaya. Link seperti ini biasanya dipakai untuk menipu (mencuri password, data bank, atau kode OTP) atau menyebarkan virus.'
+        : 'Banyak pemeriksa sepakat file ini berbahaya. Virus bisa merusak perangkat, mengunci file Anda, atau mencuri data pribadi.',
+      tips: isUrl ? [
+        'Jangan buka link ini dan jangan bagikan ke orang lain.',
+        'Jika sudah terlanjur dibuka lalu Anda mengisi password, segera ganti password akun itu.',
+        'Jika sudah memasukkan data bank, kartu, atau kode OTP, segera hubungi bank Anda.',
+        'Hapus pesan yang berisi link tersebut. Pengirimnya mungkin akunnya diretas.'
+      ] : [
+        'Jangan buka atau jalankan file ini. Hapus dari perangkat, termasuk dari tempat sampah.',
+        'Jika sudah terlanjur dibuka, putuskan internet lalu jalankan pemindaian penuh dengan antivirus.',
+        'Ganti password penting (email, bank, media sosial) dari perangkat lain yang bersih.',
+        'Hati-hati dengan pengirim file ini. Akunnya mungkin diretas.'
+      ]
+    }
+  }[level];
+  $('vMeaning').textContent = A.meaning;
+  $('vCount').textContent = count;
+  $('vTips').innerHTML = A.tips.map(t => `<li class="flex gap-2"><span aria-hidden="true">${A.icon}</span><span>${t}</span></li>`).join('');
+}
+
+/* ---------- Bagikan ke WhatsApp ---------- */
+function buildWaLink(level, score, target){
+  const isUrl = mode === 'url';
+  const head  = { safe: '✅ *Hasil Keamanan Riksa Heula*', warn: '⚠️ *Peringatan Keamanan Riksa Heula*', danger: '⛔ *Bahaya! Laporan Keamanan Riksa Heula*' }[level];
+  const label = { safe: 'Aman', warn: 'Peringatan', danger: 'Bahaya' }[level];
+  let shown = target, note = '';
+  if (isUrl && level !== 'safe') {   // link berisiko ditulis agar tidak bisa diklik orang lain
+    shown = target.replace(/^http/i, 'hxxp').replace(/\./g, '[.]');
+    note = '\n_(Link sengaja ditulis tidak bisa diklik demi keamanan. Jangan dibuka.)_';
+  }
+  const text = `${head}\n\n${isUrl ? 'Link' : 'File'}: ${shown}${note}\nHasil: ${label}\nSkor: ${score}/100\n\n_Cek keamanan link atau file kamu di Riksa Heula._`;
+  return 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text);
+}
+function renderInfo(info){
+  const box = $('infoPanel');
+  if (!info) { box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+  $('destLine').classList.toggle('hidden', !info.redirected);
+  $('destUrl').textContent = info.redirected ? info.finalUrl : '';
+  const pills = [];
+  pills.push(info.isShort ? ['amber', '🕵️ Link disamarkan (pemendek: ' + info.host + ')'] : ['green', '✅ Alamat asli, tidak disamarkan']);
+  pills.push(info.country ? ['blue', info.country.flag + ' Server di ' + info.country.name] : ['gray', '📍 Lokasi server tidak diketahui']);
+  if (info.destUnchecked) pills.push(['amber', '⏳ Tujuan asli belum sempat diperiksa penuh']);
+  $('pills').replaceChildren(...pills.map(([c, t]) => { const p = document.createElement('span'); p.className = 'pill pill-' + c; p.textContent = t; return p; }));
+  $('infoNote').textContent = (info.isShort ? 'Link pendek menyembunyikan alamat tujuan sebenarnya, jadi pastikan Anda mengenali tujuannya. ' : '') + 'Lokasi server hanya informasi tambahan dan tidak menentukan aman atau tidaknya situs.';
+}
+function showResult(stats, target, info){
+  let { level, score } = interpret(stats);
+  const brand = (mode === 'url') ? brandCheck(hostOf((info && info.finalUrl) || target)) : null;
+  if (brand && level === 'safe') { level = 'warn'; score = Math.min(score, 55); }   // bersih di VirusTotal tapi meniru merek: tetap waspada
+  const L = LOOK[level];
+  hideAll();
+  $('result').classList.remove('hidden');
+  $('verdict').className = 'mt-4 rounded-2xl p-4 border-2 ' + L.box;
+  $('vTitle').textContent = L.icon + ' ' + L.t;
+  $('vText').textContent = L.d;
+  adviceFor(level, mode, stats);
+  renderInfo(info);
+  const bw = $('brandWarn');
+  bw.classList.toggle('hidden', !brand);
+  if (brand) bw.textContent = '🚨 Awas, alamat ini terindikasi meniru ' + brand.name + '. ' + brand.reason + ' Alamat resmi ' + brand.name + ' antara lain ' + brand.official[0] + '. Jangan masukkan password, PIN, atau kode OTP di sini.';
+  $('score').dataset.final = score;
+  const C = { safe: ['#059669', '#ecfdf5'], warn: ['#d97706', '#fffbeb'], danger: ['#e11d48', '#fff1f2'] }[level];
+  $('scE').textContent = L.icon; $('scT').textContent = L.t; $('scT').style.color = C[0];
+  $('scS').textContent = score + '/100'; $('scS').style.color = C[0]; $('scBox').style.background = C[1];
+  $('scU').textContent = ((mode === 'url') ? 'Link: ' : 'File: ') + target.slice(0, 90);
+  $('scD').textContent = new Date().toLocaleString('id-ID') + ' | Diperiksa dengan Riksa Heula';
+  $('actMsg').textContent = '';
+  $('speak').textContent = '🔊 Dengarkan Hasil';
+  $('shareWa').href = buildWaLink(level, score, (info && info.redirected) ? info.finalUrl : target);
+  $('vTarget').textContent = target;
+  $('score').textContent = '0/100';
+  $('score').className = 'text-6xl font-extrabold tracking-tight sc-' + level;
+  $('needle').style.transform = 'rotate(-90deg)';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $('needle').style.transform = `rotate(${-90 + score * 1.8}deg)`;
+  }));
+  let n = 0; const step = Math.max(1, Math.round(score / 30));
+  const t = setInterval(() => { n = Math.min(score, n + step); $('score').textContent = n + '/100'; if (n >= score) clearInterval(t); }, 30);
+  $('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+
+/* ---------- Deteksi domain tiruan merek ---------- */
+const BRANDS = [
+  { name: 'BCA', keys: ['bca', 'klikbca', 'mybca'], official: ['bca.co.id', 'klikbca.com'] },
+  { name: 'BRI', keys: ['bri', 'brimo'], official: ['bri.co.id'] },
+  { name: 'Bank Mandiri', keys: ['mandiri', 'livin'], official: ['bankmandiri.co.id'] },
+  { name: 'BNI', keys: ['bni'], official: ['bni.co.id'] },
+  { name: 'BSI', keys: ['bsi'], official: ['bankbsi.co.id'] },
+  { name: 'CIMB Niaga', keys: ['cimbniaga'], official: ['cimbniaga.co.id'] },
+  { name: 'Shopee', keys: ['shopee'], official: ['shopee.co.id', 'shopee.com'] },
+  { name: 'Tokopedia', keys: ['tokopedia'], official: ['tokopedia.com'] },
+  { name: 'Lazada', keys: ['lazada'], official: ['lazada.co.id'] },
+  { name: 'DANA', keys: ['dana'], official: ['dana.id'] },
+  { name: 'OVO', keys: ['ovo'], official: ['ovo.id'] },
+  { name: 'GoPay / Gojek', keys: ['gopay', 'gojek'], official: ['gojek.com', 'gopay.co.id'] },
+  { name: 'Pos Indonesia', keys: ['posindonesia'], official: ['posindonesia.co.id'] },
+  { name: 'J&T Express', keys: ['jnt', 'jntexpress'], official: ['jet.co.id', 'jtexpress.id'] },
+  { name: 'BPJS', keys: ['bpjs'], official: ['bpjs-kesehatan.go.id', 'bpjsketenagakerjaan.go.id'] },
+  { name: 'Telkomsel', keys: ['telkomsel'], official: ['telkomsel.com'] },
+  { name: 'Traveloka', keys: ['traveloka'], official: ['traveloka.com'] }
+];
+function lev(a, b){
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+    d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+function brandCheck(host){
+  if (!host) return null;
+  host = host.toLowerCase().replace(/^www\./, '');
+  const leet = host.replace(/0/g, 'o').replace(/1/g, 'l').replace(/3/g, 'e').replace(/5/g, 's').replace(/@/g, 'a');
+  const tokens = [...new Set(leet.split(/[.\-_]/).filter(Boolean))];
+  for (const b of BRANDS) {
+    if (b.official.some(d => host === d || host.endsWith('.' + d))) continue;   // alamat resmi
+    for (const k of b.keys) {
+      if (tokens.includes(k)) return { ...b, reason: 'Nama "' + k + '" dipakai pada alamat yang bukan milik resmi mereka.' };
+      if (k.length >= 5 && tokens.some(t => t.includes(k))) return { ...b, reason: 'Nama merek disisipkan pada alamat yang bukan milik resmi mereka.' };
+      if (k.length >= 5 && tokens.some(t => t.length >= 5 && lev(t, k) === 1)) return { ...b, reason: 'Ejaannya dibuat mirip nama merek asli.' };
+    }
+  }
+  return null;
+}
+
+/* ---------- Dengarkan hasil (suara) ---------- */
+function speakResult(){
+  if (!('speechSynthesis' in window)) { $('actMsg').textContent = 'Peramban ini belum mendukung fitur suara.'; return; }
+  if (speechSynthesis.speaking) { speechSynthesis.cancel(); $('speak').textContent = '🔊 Dengarkan Hasil'; return; }
+  const clean = x => x.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\uFE0F]/gu, '').replace(/\s+/g, ' ').trim();
+  const parts = [];
+  if (!$('brandWarn').classList.contains('hidden')) parts.push(clean($('brandWarn').textContent));
+  parts.push(clean($('vTitle').textContent), 'Skor keamanan ' + $('score').dataset.final + ' dari 100.', clean($('vText').textContent), clean($('vMeaning').textContent),
+    'Saran untuk Anda. ' + [...$('vTips').children].map(li => clean(li.textContent)).join(' '));
+  const u = new SpeechSynthesisUtterance(parts.join(' '));
+  u.lang = 'id-ID'; u.rate = 0.95;
+  const v = speechSynthesis.getVoices().find(v => v.lang.toLowerCase().startsWith('id'));
+  if (v) u.voice = v;
+  u.onend = u.onerror = () => { $('speak').textContent = '🔊 Dengarkan Hasil'; };
+  speechSynthesis.speak(u);
+  $('speak').textContent = '⏹️ Hentikan';
+}
+$('speak').onclick = speakResult;
+
+/* ---------- Gambar kartu & PDF ---------- */
+$('shareImg').onclick = async () => {
+  const btn = $('shareImg'), old = btn.textContent;
+  btn.disabled = true; btn.textContent = '⏳ Membuat gambar…'; $('actMsg').textContent = '';
+  try {
+    if (!(await ensureH2C())) throw new Error('lib');
+    const canvas = await html2canvas($('shareCard'), { scale: 2, backgroundColor: null });
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    const file = new File([blob], 'riksa-heula-hasil.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], text: 'Hasil pemeriksaan Riksa Heula' });
+    else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'riksa-heula-hasil.png'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); $('actMsg').textContent = 'Gambar tersimpan di perangkat Anda. Silakan kirim lewat WhatsApp.'; }
+  } catch (e) { if (!e || e.name !== 'AbortError') $('actMsg').textContent = 'Gambar belum bisa dibuat. Pastikan internet aktif lalu coba lagi.'; }
+  finally { btn.disabled = false; btn.textContent = old; }
+};
+let prevTheme = null;
+$('pdfBtn').onclick = () => window.print();
+addEventListener('beforeprint', () => { prevTheme = document.documentElement.dataset.theme; document.documentElement.dataset.theme = 'light'; $('printDate').textContent = 'Dibuat pada ' + new Date().toLocaleString('id-ID'); });
+addEventListener('afterprint', () => { if (prevTheme) document.documentElement.dataset.theme = prevTheme; });
+
+/* ---------- Pemuat pustaka (dicoba bergantian sampai berhasil) ---------- */
+function loadLib(ready, urls){
+  return new Promise(resolve => {
+    if (ready()) return resolve(true);
+    let i = 0;
+    const next = () => {
+      if (i >= urls.length) return resolve(false);
+      const sc = document.createElement('script');
+      sc.src = urls[i++];
+      sc.onload = () => ready() ? resolve(true) : next();
+      sc.onerror = next;
+      document.head.appendChild(sc);
+    };
+    next();
+  });
+}
+const ensureJsQR = () => loadLib(() => !!window.jsQR, [
+  'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js',
+  'https://unpkg.com/jsqr@1.4.0/dist/jsQR.js'
+]);
+const ensureH2C = () => loadLib(() => !!window.html2canvas, [
+  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+  'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'
+]);
+ensureJsQR(); ensureH2C();   // muat lebih awal di latar belakang
+const QR_LIB_ERR = 'Pembaca QR gagal dimuat dari internet. Pastikan Anda online, matikan pemblokir iklan atau VPN yang menahan situs cdn.jsdelivr.net, lalu muat ulang halaman.';
+
+/* ---------- Scan QR / QRIS ---------- */
+function stopCam(){
+  cancelAnimationFrame(camRaf);
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+  $('camWrap').classList.add('hidden'); $('camBtn').textContent = '📷 Buka Kamera';
+}
+function readQrFromImage(img){
+  const sc = Math.min(1, 1400 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+  c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+  const x = c.getContext('2d'); x.drawImage(img, 0, 0, c.width, c.height);
+  const d = x.getImageData(0, 0, c.width, c.height);
+  return jsQR(d.data, d.width, d.height, { inversionAttempts: 'attemptBoth' });
+}
+async function pickQr(f){
+  hideAll();
+  if (!f) return;
+  if (!(await ensureJsQR())) return showError(QR_LIB_ERR);
+  const img = new Image(), url = URL.createObjectURL(f);
+  img.onload = () => { const r = readQrFromImage(img); URL.revokeObjectURL(url); r ? handleQr(r.data) : showError('QR tidak terbaca. Pastikan QR terlihat jelas, tidak buram, dan memenuhi sebagian besar gambar.'); };
+  img.onerror = () => showError('File ini bukan gambar yang bisa dibaca.');
+  img.src = url;
+}
+const qd = $('qrDrop');
+qd.onclick = () => $('qrInput').click();
+qd.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('qrInput').click(); } };
+['dragenter','dragover'].forEach(ev => qd.addEventListener(ev, e => { e.preventDefault(); qd.classList.add('active'); }));
+['dragleave','drop'].forEach(ev => qd.addEventListener(ev, e => { e.preventDefault(); qd.classList.remove('active'); }));
+qd.addEventListener('drop', e => pickQr(e.dataTransfer.files[0]));
+$('qrInput').onchange = e => { pickQr(e.target.files[0]); e.target.value = ''; };
+$('camBtn').onclick = async () => {
+  if (camStream) return stopCam();
+  hideAll();
+  if (!(await ensureJsQR())) return showError(QR_LIB_ERR);
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+  } catch { return showError('Kamera tidak bisa dibuka. Izinkan akses kamera, dan buka halaman lewat https atau localhost. Atau unggah foto QR saja.'); }
+  const v = $('cam'); v.srcObject = camStream; await v.play();
+  $('camWrap').classList.remove('hidden'); $('camBtn').textContent = '⏹️ Tutup Kamera';
+  const c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true });
+  const tick = () => {
+    if (!camStream) return;
+    if (v.videoWidth) {
+      c.width = v.videoWidth; c.height = v.videoHeight; x.drawImage(v, 0, 0);
+      const d = x.getImageData(0, 0, c.width, c.height), r = jsQR(d.data, d.width, d.height);
+      if (r && r.data) { stopCam(); return handleQr(r.data); }
+    }
+    camRaf = requestAnimationFrame(tick);
+  };
+  tick();
+};
+
+function handleQr(text){
+  hideAll();
+  const t = text.trim();
+  if (t.startsWith('000201')) return showQris(t);
+  const m = t.match(/https?:\/\/[^\s]+/i) || (/^(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i.test(t) ? [t] : null);
+  if (m) {   // QR berisi link: langsung diperiksa
+    const u = /^https?:\/\//i.test(m[0]) ? m[0] : 'https://' + m[0];
+    setMode('url'); $('urlInput').value = u;
+    return run(() => checkUrl(u), u);
+  }
+  qrBox('QR berisi teks biasa', [['gray', 'ℹ️ Bukan link dan bukan QRIS']], [['Isi QR', t.slice(0, 300)]], [], 'Isi QR ini bukan link, jadi tidak diperiksa ke VirusTotal. Jangan menuruti perintah di dalamnya jika berasal dari sumber yang tidak dikenal.');
+}
+function qrBox(title, pills, rows, warns, note){
+  const mk = (tag, cls, txt) => { const e = document.createElement(tag); e.className = cls; e.textContent = txt; return e; };
+  $('qbTitle').textContent = title;
+  $('qbPills').replaceChildren(...pills.map(([c, t]) => mk('span', 'pill pill-' + c, t)));
+  $('qbRows').replaceChildren(...rows.map(([k, v]) => { const d = mk('div', 'neo px-4 py-2 text-sm', ''); d.append(mk('span', 'text-slate-500', k + ': '), mk('b', 'break-words', v)); return d; }));
+  $('qbWarns').replaceChildren(...warns.map(w => mk('div', 'st-warn border-2 rounded-2xl p-3 text-sm', '⚠️ ' + w)));
+  $('qbNote').textContent = note;
+  $('qrisBox').classList.remove('hidden');
+  $('qrisBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+$('qbBack').onclick = () => { hideAll(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+/* ---------- QRIS (format EMVCo) ---------- */
+function tlv(str){
+  const out = []; let i = 0;
+  while (i + 4 <= str.length) {
+    const len = parseInt(str.substr(i + 2, 2), 10);
+    if (isNaN(len) || i + 4 + len > str.length) return null;
+    out.push([str.substr(i, 2), str.substr(i + 4, len)]); i += 4 + len;
+  }
+  return out;
+}
+function crc16(str){
+  let c = 0xFFFF;
+  for (let i = 0; i < str.length; i++) { c ^= str.charCodeAt(i) << 8; for (let j = 0; j < 8; j++) c = (c & 0x8000) ? ((c << 1) ^ 0x1021) : (c << 1); c &= 0xFFFF; }
+  return c.toString(16).toUpperCase().padStart(4, '0');
+}
+const ISSUERS = { gopay: 'GoPay', bca: 'BCA', dana: 'DANA', ovo: 'OVO', linkaja: 'LinkAja', shopee: 'ShopeePay', bri: 'BRI', mandiri: 'Bank Mandiri', bni: 'BNI', cimb: 'CIMB Niaga', permata: 'Bank Permata', btn: 'BTN', bsi: 'BSI', jago: 'Bank Jago', dki: 'Bank DKI' };
+const CRITERIA = { UMI: 'Usaha Mikro', UKE: 'Usaha Kecil', UME: 'Usaha Menengah', UBE: 'Usaha Besar', URE: 'Usaha Reguler' };
+function showQris(t){
+  const f = tlv(t);
+  if (!f) return qrBox('QRIS tidak utuh', [['amber', '⚠️ Data rusak']], [], ['Data di dalam QR ini tidak utuh atau sudah diubah.'], 'Jangan lanjutkan pembayaran dengan QR ini. Minta QRIS dari penjual langsung.');
+  const get = k => (f.find(x => x[0] === k) || [])[1];
+  const name = get('59'), city = get('60'), post = get('61'), country = get('58'), cur = get('53'), amount = get('54'), init = get('01');
+  let issuer = null, nmid = null, crit = null;
+  for (const [tg, v] of f) {
+    if (+tg < 26 || +tg > 51) continue;
+    const sub = tlv(v) || [], g = k => (sub.find(x => x[0] === k) || [])[1], dom = (g('00') || '').toLowerCase();
+    if (dom.includes('qris')) { nmid = nmid || g('02'); crit = crit || g('03'); }
+    else if (!issuer && dom) { const key = Object.keys(ISSUERS).find(k => dom.includes(k)); issuer = key ? ISSUERS[key] : g('00'); }
+  }
+  const warns = [];
+  if (t.slice(-8, -4) !== '6304' || crc16(t.slice(0, -4)) !== t.slice(-4).toUpperCase()) warns.push('Kode pengaman QR (CRC) tidak cocok. QR ini kemungkinan sudah diubah atau rusak.');
+  if (!name) warns.push('Nama merchant tidak ditemukan di dalam QR.');
+  if (country && country !== 'ID') warns.push('Kode negara bukan Indonesia (' + country + '). QRIS resmi memakai ID.');
+  if (cur && cur !== '360') warns.push('Mata uang bukan Rupiah. QRIS resmi memakai Rupiah.');
+  if (!nmid) warns.push('ID merchant nasional (NMID) tidak ditemukan. QRIS resmi biasanya memilikinya.');
+  if (init === '11' && amount) warns.push('QR statis tetapi memuat nominal tetap. Ini tidak lazim, periksa nominalnya.');
+  const rows = [
+    ['Nama merchant', name || '-'],
+    ['Lokasi', [city, post, country].filter(Boolean).join(', ') || '-'],
+    ['Pencetak/penerbit QRIS', issuer || 'Tidak terbaca'],
+    ['ID merchant nasional (NMID)', nmid || '-'],
+    ['Skala usaha', CRITERIA[crit] || crit || '-'],
+    ['Jenis QR', init === '12' ? 'Dinamis (nominal sekali pakai)' : init === '11' ? 'Statis (bisa dipakai berulang)' : '-']
+  ];
+  if (amount) rows.push(['Nominal', 'Rp ' + Number(amount).toLocaleString('id-ID')]);
+  qrBox('Hasil baca QRIS', [warns.length ? ['amber', '⚠️ Ada hal yang janggal'] : ['green', '✅ Format QRIS terbaca wajar (bukan jaminan asli)']], rows, warns,
+    'Cocokkan nama merchant di atas dengan nama toko yang sebenarnya. Jika berbeda, jangan bayar. Periksa juga apakah stiker QRIS ditempel menimpa QRIS asli. Riksa Heula hanya membaca isi QR dan tidak bisa memastikan sebuah QRIS asli atau tiruan.');
+}
+
+/* ---------- Kuis edukasi ---------- */
+const QUIZ = [
+  { src: '💬 SMS', m: 'Selamat! Nomor Anda terpilih memenangkan undian Rp50 juta dari Shopee. Klaim hadiah di shopee-hadiah.co/klaim sebelum 24 jam.', a: 'scam', e: 'Penipuan. Alamatnya bukan shopee.co.id, hadiahnya datang tiba-tiba, dan ada batas waktu supaya Anda panik. Shopee tidak membagi hadiah lewat link seperti ini.' },
+  { src: '💬 WhatsApp', m: 'Paket Anda gagal dikirim. Buka file "Lihat Resi.apk" untuk melihat alamat tujuan.', a: 'scam', e: 'Penipuan. File berakhiran .apk adalah aplikasi yang bisa mengambil alih HP dan membaca SMS OTP. Kurir resmi tidak mengirim resi dalam bentuk aplikasi.' },
+  { src: '🌐 Browser', m: 'Anda mengetik sendiri bca.co.id di peramban, lalu masuk ke KlikBCA dari sana.', a: 'safe', e: 'Aman. Mengetik sendiri alamat resmi atau memakai aplikasi resmi adalah cara terbaik, karena Anda tidak melewati link kiriman orang lain.' },
+  { src: '📞 Telepon', m: 'Halo Pak, saya dari bank. Ada transaksi mencurigakan. Tolong sebutkan kode OTP yang baru kami kirim untuk membatalkannya.', a: 'scam', e: 'Penipuan. Bank tidak pernah meminta kode OTP, PIN, atau password. OTP adalah kunci rekening Anda, jangan diberikan kepada siapa pun.' },
+  { src: '💬 SMS', m: 'Kode OTP Anda 482913. Jangan berikan kepada siapa pun. (Dikirim beberapa detik setelah Anda sendiri menekan tombol Masuk di aplikasi.)', a: 'safe', e: 'Wajar, selama Anda memang sedang masuk ke akun itu. Aturannya: OTP yang Anda minta sendiri boleh dipakai sendiri, tapi tidak boleh dibagikan. OTP yang datang tanpa Anda minta berarti ada orang yang mencoba masuk ke akun Anda.' }
+];
+let qi = 0, qs = 0;
+function renderQuiz(){
+  const box = $('quizBox');
+  if (qi >= QUIZ.length) {
+    const msg = qs === 5 ? 'Luar biasa! Kamu jago mengenali penipuan.' : qs >= 3 ? 'Lumayan! Tetap waspada ya.' : 'Tidak apa-apa, ayo belajar lagi dan coba ulang.';
+    const wa = 'https://api.whatsapp.com/send?text=' + encodeURIComponent('🎮 Skor kuis "Bisakah Kamu Mengenali Penipuan?" aku: ' + qs + '/5!\n\nCoba juga dan periksa link atau file mencurigakan dengan Riksa Heula.');
+    box.innerHTML = `<div class="text-center"><div class="text-6xl">🏆</div><p class="text-sm text-slate-600 mt-2">Skor akhir kamu</p><p class="text-6xl font-extrabold title-grad">${qs}/5</p><p class="font-bold mt-2">${msg}</p>
+      <div class="grid gap-3 mt-5"><a href="${wa}" target="_blank" rel="noopener" class="rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold px-4 py-3 shadow-md">💬 Bagikan Skor ke WhatsApp</a><button id="qRestart" class="btn-soft rounded-2xl font-bold px-4 py-3">Ulangi kuis</button></div></div>`;
+    return;
+  }
+  const q = QUIZ[qi];
+  box.innerHTML = `<p class="font-extrabold">🎮 Bisakah Kamu Mengenali Penipuan?</p><p class="text-xs text-slate-500">Soal ${qi + 1} dari ${QUIZ.length}</p>
+    <div class="neo p-4 mt-3"><p class="text-xs text-slate-500">${q.src}</p><p class="mt-1 leading-relaxed">${q.m}</p></div>
+    <div id="qOpts" class="grid grid-cols-2 gap-3 mt-4"><button data-a="safe" class="btn-soft rounded-2xl font-bold py-3">✅ Aman</button><button data-a="scam" class="btn-soft rounded-2xl font-bold py-3">🚨 Penipuan</button></div>
+    <div id="qFb" class="mt-4"></div>`;
+}
+$('quizBox').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'qRestart') { qi = 0; qs = 0; return renderQuiz(); }
+  if (b.id === 'qNext') { qi++; return renderQuiz(); }
+  if (!b.dataset.a) return;
+  const q = QUIZ[qi], ok = b.dataset.a === q.a; if (ok) qs++;
+  $('qOpts').querySelectorAll('button').forEach(x => x.disabled = true);
+  $('qFb').innerHTML = `<div class="${ok ? 'st-safe' : 'st-danger'} border-2 rounded-2xl p-4 text-sm leading-relaxed"><p class="font-extrabold">${ok ? '🎉 Benar!' : '😅 Kurang tepat.'}</p><p class="mt-1">${q.e}</p></div>
+    <button id="qNext" class="btn-main mt-3 w-full rounded-2xl text-white font-extrabold py-3">${qi + 1 < QUIZ.length ? 'Soal berikutnya' : 'Lihat skor'}</button>`;
+});
+
+/* ---------- Tombol aksi ---------- */
+async function run(task, target){
+  if (busy) return;
+  busy = true;
+  try { const res = await task(); showResult(res.stats, target, res.info); }
+  catch (e) { showError(e instanceof FriendlyError ? e.message : 'Terjadi kesalahan tak terduga. Coba lagi ya.'); }
+  finally { busy = false; }
+}
+$('goUrl').onclick = () => {
+  let u = $('urlInput').value.trim();
+  if (!u) return showError('Tempel dulu alamat link yang ingin diperiksa.');
+  if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+  try { new URL(u); } catch { return showError('Format link belum benar. Contoh: https://contoh.com'); }
+  run(() => checkUrl(u), u);
+};
+$('urlInput').onkeydown = e => { if (e.key === 'Enter') $('goUrl').click(); };
+$('goFile').onclick = () => { if (chosenFile) run(() => checkFile(chosenFile), chosenFile.name); };
+$('again').onclick = () => { clearFile(); $('urlInput').value = ''; window.scrollTo({ top: 0, behavior: 'smooth' }); };
+</script>
+</body>
+</html>
